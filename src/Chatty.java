@@ -42,13 +42,13 @@ public class Chatty extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					client.wait();
+					cc.sleep(500);
 				} catch (InterruptedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				BufferedReader br = new BufferedReader(new StringReader(client.getMemberList())) ; 
-				client.notify();
+//				client.notify();
 				String member ="" ; 
 				try { 
 				while (( member = br.readLine())!= null) { 
@@ -100,12 +100,12 @@ public class Chatty extends JPanel {
 		btnOnlinePeople.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					client.wait();
+					cc.wait();
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
 				memberList.setText(client.getMemberList());
-				client.notify();
+//				client.notify();
 			}
 		});
 		btnOnlinePeople.setBounds(671, 208, 190, 25);

@@ -13,25 +13,25 @@ public class Client {
 	static DataOutputStream outToServer;
 	private String clientName;
 	private static  String Chatt =""; 
-	private static class receiveMessage implements Runnable {
-
-		public receiveMessage() {
-		}
-
-		public void run() {
-			while (true) {
-				try {
-					
-					inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-					String modifiedSentence = inFromServer.readLine();
-					Chatt = Chatt +"\n" + modifiedSentence ; 
-					System.out.println(modifiedSentence);
-				} catch (IOException e) {
-					break;
-				}
-			}
-		}
-	}
+//	private static class receiveMessage implements Runnable {
+//
+//		public receiveMessage() {
+//		}
+//
+//		public void run() {
+//			while (true) {
+//				try {
+//					
+//					inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+//					String modifiedSentence = inFromServer.readLine();
+//					Chatt = Chatt +"\n" + modifiedSentence ; 
+//					System.out.println(modifiedSentence);
+//				} catch (IOException e) {
+//					break;
+//				}
+//			}
+//		}
+//	}
 
 	private static class sendMessage implements Runnable {
 		public sendMessage() {
@@ -92,12 +92,12 @@ public class Client {
 				return false;
 			}
 			this.clientName = name;
-			receiveMessage receive = new receiveMessage();
-			sendMessage send = new sendMessage();
-			Thread r = new Thread(receive);
-			Thread s = new Thread(send);
-			r.start();
-			s.start();
+//			receiveMessage receive = new receiveMessage();
+//			sendMessage send = new sendMessage();
+//			Thread r = new Thread(receive);
+//			Thread s = new Thread(send);
+//			r.start();
+//			s.start();
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -111,7 +111,13 @@ public class Client {
 			outToServer.writeBytes("CONNECT " + Destination);
 			inFromUser = new BufferedReader(new StringReader(message));
 			Chatt = Chatt +"\n" +"You :" +  message ; 
+			String sentence;
+			while ((sentence = inFromUser.readLine())!= null){
+				
 
+				outToServer.writeBytes(sentence + '\n');
+
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -123,25 +129,33 @@ public class Client {
 	}
 
 	public String getChatt () { 
+		try {
+
+			String modifiedSentence = inFromServer.readLine();
+			Chatt = Chatt +"\n" + modifiedSentence ; 
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return Chatt; 
 	}
 	public String getMemberList() {
-		try {
-			outToServer.writeBytes("get members" + '\n');
-			String members = inFromServer.readLine();
-			StringTokenizer mem = new StringTokenizer(members, ",");
-			String values = "You\n";
-			while (mem.hasMoreTokens()) {
-				String instance = mem.nextToken();
-				if (!this.clientName.equals(instance))
-					values += instance + "\n";
-			}
-			return values;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-
-		}
+//		try {
+//			outToServer.writeBytes("get members" + '\n');
+//			String members = inFromServer.readLine();
+//			StringTokenizer mem = new StringTokenizer(members, ",");
+//			String values = "You\n";
+//			while (mem.hasMoreTokens()) {
+//				String instance = mem.nextToken();
+//				if (!this.clientName.equals(instance))
+//					values += instance + "\n";
+//			}
+			return "hhahahahah \n lknaslknflkansf \n akjsnfkasdsad";
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return null;
+//
+//		}
 	}
 	// public static void main(String[] args) throws IOException,
 	// InterruptedException {
