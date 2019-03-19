@@ -147,9 +147,10 @@ public class Server1 {
 						x = x.substring(6) + getMembers() ;
 						else {
 							x = getMembers() ; 
+							x=x.substring(2) ; 
 						}
-						out1 = new PrintWriter(this.targetSocket.getOutputStream(), true); 
-						out1.println( x); 
+						out1 = new PrintWriter(this.targetSocket.getOutputStream(), true);
+						out1.println("MEMBERLIST "+ x); 
 						
 							
 						
@@ -172,7 +173,7 @@ public class Server1 {
 						target = findSocket(name);
 						if (this.socket.equals(theOtherServer)) {
 							if (name.equals("YESS")) {
-								out1.println("YOU CAN NOW CHAT WITH " + this.tarName);
+//								out1.println("YOU CAN NOW CHAT WITH " + this.tarName);
 							} else if (name.equals("NOO")) {
 								out1.println("there is no one with that name ");
 							} else {
@@ -188,14 +189,19 @@ public class Server1 {
 							tarName = name;
 
 							if (target == null) {
+								String sec = s.nextToken() ;  
+								if (Integer.parseInt(sec) == 1) { 
+									out.println("Sorry this message was not sent because of ttl ");
+								}
+								else {
 								outServer.println("CONNECT " + name);
 								ser.targetSocket = this.socket;
 								ser.out1 = new PrintWriter(this.socket.getOutputStream(), true);
 								ser.tarName = name;
 								this.targetSocket = theOtherServer;
-
+								}
 							} else {
-								out.println("YOU CAN NOW CHAT WITH " + name);
+//								out.println("YOU CAN NOW CHAT WITH " + name);
 								targetSocket = target;
 								out1 = new PrintWriter(this.targetSocket.getOutputStream(), true);
 
@@ -223,7 +229,6 @@ public class Server1 {
 							
 							ser.targetSocket = this.socket ; 
 							outServer.println("MEMBERS?");
-							
 
 						}
 
@@ -249,7 +254,7 @@ public class Server1 {
 								out1.println("FROM " + this.clientName + " : " + x);
 							}
 						} else {
-							out.println(FROM_SERVER + x);
+//							out.println(FROM_SERVER + x);
 						}
 					}
 				}

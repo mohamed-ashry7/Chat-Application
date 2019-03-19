@@ -49,6 +49,7 @@ public class ClientGui {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		ClientGui cch = this ; 
 		frame = new JFrame();
 		frame.setBounds(100, 100, 919, 643);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,6 +57,7 @@ public class ClientGui {
 		frame.addWindowListener(new WindowAdapter() {
 			 public void windowClosing(WindowEvent e)
 	            {
+//	                JOptionPane.showInternalMessageDialog(null , "YOU HAVE QUITTED , BYE YOUNG FELLOW COME SOON ");
 	                client.quit() ; 
 	                e.getWindow().dispose();
 	            }
@@ -91,7 +93,7 @@ public class ClientGui {
 				frame.requestFocus();
 			}
 		});
-		JComboBox comboBox = new JComboBox();
+		JComboBox <String >comboBox = new JComboBox<String>();
 		comboBox.addItem(new String("Server"));
 		comboBox.addItem(new String("Server1"));
 		comboBox.setBounds(327, 289, 198, 22);
@@ -116,7 +118,9 @@ public class ClientGui {
 					frame.remove(comboBox);
 					frame.remove(btnJoin);
 					frame.setLayout(new BorderLayout());
-					frame.add(new Chatty(client) ,BorderLayout.CENTER) ; 
+					Chatty cchh = new Chatty(client, cch ) ; 
+
+					frame.add(cchh ,BorderLayout.CENTER) ; 
 					frame.repaint();
 					frame.revalidate();
 				}

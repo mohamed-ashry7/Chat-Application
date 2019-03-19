@@ -6,58 +6,75 @@ import java.io.StringReader;
 import java.net.Socket;
 import java.util.StringTokenizer;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 public class Client {
 	static Socket clientSocket;
-	static BufferedReader inFromUser;
 	static BufferedReader inFromServer;
 	static DataOutputStream outToServer;
 	private String clientName;
-	private static  String Chatt =""; 
-//	private static class receiveMessage implements Runnable {
-//
-//		public receiveMessage() {
-//		}
-//
-//		public void run() {
-//			while (true) {
-//				try {
-//					
-//					inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//					String modifiedSentence = inFromServer.readLine();
-//					Chatt = Chatt +"\n" + modifiedSentence ; 
-//					System.out.println(modifiedSentence);
-//				} catch (IOException e) {
-//					break;
-//				}
-//			}
-//		}
-//	}
+	private static String Chatt = "";
+	static String MemeberList = "";
+	receiveMessage receive;
 
-	private static class sendMessage implements Runnable {
-		public sendMessage() {
+	private static class receiveMessage implements Runnable {
 
+		public receiveMessage() {
 		}
 
 		public void run() {
+			while (true) {
+				try {
+					String modifiedSentence;
+					while ((modifiedSentence = inFromServer.readLine()) != null) {
+						StringTokenizer ss = new StringTokenizer(modifiedSentence);
+						String fir = ss.nextToken();
+						if (!fir.equals("MEMBERLIST")) {
+							Chatt = Chatt + "\n" + modifiedSentence;
+							modifiedSentence = null;
+						} else {
+							MemeberList = modifiedSentence.substring("MEMBERLIST".length() + 1);
+						}
+					}
+					System.out.println(modifiedSentence);
 
-			try {
-
-				System.out.println("if you want to connect to somebody just write \"CONNECT \" and then the name ");
-				while (true) {
-					String sentence;
-					sentence = inFromUser.readLine();
-
-					outToServer.writeBytes(sentence + '\n');
-
+				} catch (IOException e) {
+					break;
 				}
-
-			} catch (IOException e) {
-
 			}
-
 		}
 	}
 
+	//
+	// private static class sendMessage implements Runnable {
+	// String Destination="";
+	//
+	// public void run() {
+	//
+	// try {
+	//
+	// System.out.println("if you want to connect to somebody just
+	// write\"CONNECT \" and then the name ");
+	// while (true) {
+	// if (Destination.length() != 0 ) {
+	// outToServer.writeBytes("CONNECT " + Destination);
+	//
+	// }
+	// String sentence;
+	// while (inFromUser != null && (sentence = inFromUser.readLine()) != null)
+	// {
+	// System.out.println(3+sentence);
+	// outToServer.writeBytes(sentence + '\n');
+	// }
+	//
+	// }
+	//
+	// } catch (IOException e) {
+	//
+	// }
+	//
+	// }
+	// }
 	public void quit() {
 		try {
 			outToServer.writeBytes("quit" + '\n');
@@ -71,19 +88,11 @@ public class Client {
 
 	public boolean join(String name, int port) {
 
-		// inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		// System.out.println("Choose your server for Server1 enter 6000 Server
-		// enter 5999");
-		// String portt = inFromUser.readLine();
-
-		// int port = Integer.parseInt(portt);
-		// System.out.println("Enter" + " your name ");
 		try {
 			clientSocket = new Socket("localhost", port);
 			inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
-			// String name = inFromUser.readLine();
 			outToServer.writeBytes(name + '\n');
 			String response = inFromServer.readLine();
 			System.out.println(response);
@@ -91,13 +100,10 @@ public class Client {
 				clientSocket.close();
 				return false;
 			}
-			this.clientName = name;
-//			receiveMessage receive = new receiveMessage();
-//			sendMessage send = new sendMessage();
-//			Thread r = new Thread(receive);
-//			Thread s = new Thread(send);
-//			r.start();
-//			s.start();
+			this.clientName = name.trim();
+			receive = new receiveMessage();
+			Thread r = new Thread(receive);
+			r.start();
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -107,19 +113,22 @@ public class Client {
 	}
 
 	public void Chat(String Source, String Destination, String message, int ttl) {
-		try {
-			outToServer.writeBytes("CONNECT " + Destination);
-			inFromUser = new BufferedReader(new StringReader(message));
-			Chatt = Chatt +"\n" +"You :" +  message ; 
-			String sentence;
-			while ((sentence = inFromUser.readLine())!= null){
-				
 
-				outToServer.writeBytes(sentence + '\n');
+		if (ttl <= 0) {
+			Chatt += Chatt + "\n" + "Sorry this message cannot be send because of ttl ";
+		} else {
+			try {
+				outToServer.writeBytes("CONNECT " + Destination + " " + ttl + '\n');
+				Chatt = Chatt + "\n" + "You :" + message;
 
+				String sentence;
+				BufferedReader messages = new BufferedReader(new StringReader(message));
+				while ((sentence = messages.readLine()) != null) {
+					outToServer.writeBytes(sentence + '\n');
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 	}
@@ -128,37 +137,32 @@ public class Client {
 		return clientName;
 	}
 
-	public String getChatt () { 
-		try {
+	public String getChatt() {
 
-			String modifiedSentence = inFromServer.readLine();
-			Chatt = Chatt +"\n" + modifiedSentence ; 
-			
+		return Chatt;
+	}
+
+	public String getMemberList() {
+
+		try {
+			outToServer.writeBytes("get members" + '\n');
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return Chatt; 
+		while (MemeberList.length() == 0) {
+			System.out.println(" in the :oop ");
+		}
+		StringTokenizer mem = new StringTokenizer(MemeberList, ",");
+		String values = "You\n";
+		while (mem.hasMoreTokens()) {
+			String instance = mem.nextToken().trim();
+			if (!this.clientName.equals(instance)) {
+				values += instance + "\n";
+			}
+		}
+		MemeberList = "";
+		return values;
+
 	}
-	public String getMemberList() {
-//		try {
-//			outToServer.writeBytes("get members" + '\n');
-//			String members = inFromServer.readLine();
-//			StringTokenizer mem = new StringTokenizer(members, ",");
-//			String values = "You\n";
-//			while (mem.hasMoreTokens()) {
-//				String instance = mem.nextToken();
-//				if (!this.clientName.equals(instance))
-//					values += instance + "\n";
-//			}
-			return "hhahahahah \n lknaslknflkansf \n akjsnfkasdsad";
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return null;
-//
-//		}
-	}
-	// public static void main(String[] args) throws IOException,
-	// InterruptedException {
-	// }
 
 }
