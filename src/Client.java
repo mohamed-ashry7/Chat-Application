@@ -13,24 +13,32 @@ public class Client {
 	static BufferedReader inFromServer;
 	static DataOutputStream outToServer;
 	private String clientName;
-	private static String Chatt = "";
+	public static String Chatt = "";
 	static String MemeberList = "";
 	receiveMessage receive;
-
+	private ClientGui gooei ; 
 	private static class receiveMessage implements Runnable {
 
-		public receiveMessage() {
+		
+		
+		private ClientGui clientgooei ; 
+		public receiveMessage(ClientGui ggg) {
+			clientgooei = ggg ; 
 		}
 
 		public void run() {
 			while (true) {
 				try {
 					String modifiedSentence;
+
 					while ((modifiedSentence = inFromServer.readLine()) != null) {
 						StringTokenizer ss = new StringTokenizer(modifiedSentence);
 						String fir = ss.nextToken();
 						if (!fir.equals("MEMBERLIST")) {
+							System.out.println(modifiedSentence);
 							Chatt = Chatt + "\n" + modifiedSentence;
+							clientgooei.chatter.setTheChat("");
+							clientgooei.chatter.setTheChat(Chatt);
 							modifiedSentence = null;
 						} else {
 							MemeberList = modifiedSentence.substring("MEMBERLIST".length() + 1);
@@ -75,6 +83,10 @@ public class Client {
 	//
 	// }
 	// }
+	public Client(ClientGui clg ) {
+		gooei = clg ; 
+		
+	}
 	public void quit() {
 		try {
 			outToServer.writeBytes("quit" + '\n');
@@ -101,7 +113,7 @@ public class Client {
 				return false;
 			}
 			this.clientName = name.trim();
-			receive = new receiveMessage();
+			receive = new receiveMessage(gooei);
 			Thread r = new Thread(receive);
 			r.start();
 			return true;
@@ -115,7 +127,7 @@ public class Client {
 	public void Chat(String Source, String Destination, String message, int ttl) {
 
 		if (ttl <= 0) {
-			Chatt += Chatt + "\n" + "Sorry this message cannot be send because of ttl ";
+			Chatt = Chatt + "\n" + "Sorry this message cannot be send because of ttl ";
 		} else {
 			try {
 				outToServer.writeBytes("CONNECT " + Destination + " " + ttl + '\n');
@@ -126,10 +138,14 @@ public class Client {
 				while ((sentence = messages.readLine()) != null) {
 					outToServer.writeBytes(sentence + '\n');
 				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
+		gooei.chatter.setTheChat("");
+		gooei.chatter.setTheChat(Chatt );
 
 	}
 
@@ -137,10 +153,7 @@ public class Client {
 		return clientName;
 	}
 
-	public String getChatt() {
 
-		return Chatt;
-	}
 
 	public String getMemberList() {
 
@@ -150,7 +163,6 @@ public class Client {
 			e.printStackTrace();
 		}
 		while (MemeberList.length() == 0) {
-			System.out.println(" in the :oop ");
 		}
 		StringTokenizer mem = new StringTokenizer(MemeberList, ",");
 		String values = "You\n";

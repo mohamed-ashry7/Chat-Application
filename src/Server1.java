@@ -18,7 +18,7 @@ public class Server1 {
 	private static Socket theOtherServer;
 	private static PrintWriter outServer;
 	private static BufferedReader inFromOtherServer;
-	 static Handler ser;
+	static Handler ser;
 	private static String check = "";
 
 	public static boolean exists(String name) throws IOException {
@@ -96,24 +96,17 @@ public class Server1 {
 				System.out.println("SERVER1 IS CONNECTED TO THE SERVER");
 		}
 
-		public  String getNames() { 
-			String x = " The members who are currently online { ";
-			for (int i = 0; i < Server1.clients.size() ; i++) {
-				x += Server1.clients.get(i).clientName + ", ";
-			}
-			
-			return x ; 
-		}
 		public String getMembers() {
-		
+
 			String x = "";
 			for (int i = 0; i < clients.size(); i++) {
-				x += ", " + clients.get(i).clientName ;
+				x += ", " + clients.get(i).clientName;
 			}
 
-			return x;		}
+			return x;
+		}
 
-		public  Socket findSocket(String x) {
+		public Socket findSocket(String x) {
 			for (int i = 0; i < clients.size(); i++) {
 				if (x.equals(clients.get(i).clientName)) {
 					return clients.get(i).socket;
@@ -121,7 +114,7 @@ public class Server1 {
 			}
 			return null;
 		}
-		
+
 		public void run() {
 
 			try {
@@ -136,27 +129,21 @@ public class Server1 {
 						first = s.nextToken();
 					Socket target;
 					String name;
-					
-					
-					if (first.equals("MEMBERS?")) { 
-						String members = getMembers() ;
+
+					if (first.equals("MEMBERS?")) {
+						String members = getMembers();
 						outServer.println("MEM " + members);
-					}
-					else if (first.equals("MEM")){
+					} else if (first.equals("MEM")) {
 						if (x.length() > 4)
-						x = x.substring(6) + getMembers() ;
+							x = x.substring(6) + getMembers();
 						else {
-							x = getMembers() ; 
-							x=x.substring(2) ; 
+							x = getMembers();
+							x = x.substring(2);
 						}
 						out1 = new PrintWriter(this.targetSocket.getOutputStream(), true);
-						out1.println("MEMBERLIST "+ x); 
-						
-							
-						
-						
-					}
-					else if (first.equals("EXIST")) {
+						out1.println("MEMBERLIST " + x);
+
+					} else if (first.equals("EXIST")) {
 						name = s.nextToken();
 						target = findSocket(name);
 
@@ -173,7 +160,8 @@ public class Server1 {
 						target = findSocket(name);
 						if (this.socket.equals(theOtherServer)) {
 							if (name.equals("YESS")) {
-//								out1.println("YOU CAN NOW CHAT WITH " + this.tarName);
+								// out1.println("YOU CAN NOW CHAT WITH " +
+								// this.tarName);
 							} else if (name.equals("NOO")) {
 								out1.println("there is no one with that name ");
 							} else {
@@ -189,19 +177,20 @@ public class Server1 {
 							tarName = name;
 
 							if (target == null) {
-								String sec = s.nextToken() ;  
-								if (Integer.parseInt(sec) == 1) { 
+								String sec = s.nextToken();
+								int ttl = Integer.parseInt(sec);
+								if (ttl == 1) {
 									out.println("Sorry this message was not sent because of ttl ");
-								}
-								else {
-								outServer.println("CONNECT " + name);
-								ser.targetSocket = this.socket;
-								ser.out1 = new PrintWriter(this.socket.getOutputStream(), true);
-								ser.tarName = name;
-								this.targetSocket = theOtherServer;
+								} else {
+									ttl--;
+									outServer.println("CONNECT " + name + " " + ttl);
+									ser.targetSocket = this.socket;
+									ser.out1 = new PrintWriter(this.socket.getOutputStream(), true);
+									ser.tarName = name;
+									this.targetSocket = theOtherServer;
 								}
 							} else {
-//								out.println("YOU CAN NOW CHAT WITH " + name);
+								// out.println("YOU CAN NOW CHAT WITH " + name);
 								targetSocket = target;
 								out1 = new PrintWriter(this.targetSocket.getOutputStream(), true);
 
@@ -226,8 +215,8 @@ public class Server1 {
 							}
 							break;
 						} else if (x.equals("get members")) {
-							
-							ser.targetSocket = this.socket ; 
+
+							ser.targetSocket = this.socket;
 							outServer.println("MEMBERS?");
 
 						}
@@ -253,8 +242,10 @@ public class Server1 {
 							} else {
 								out1.println("FROM " + this.clientName + " : " + x);
 							}
+							targetSocket = null;
+
 						} else {
-//							out.println(FROM_SERVER + x);
+							// out.println(FROM_SERVER + x);
 						}
 					}
 				}

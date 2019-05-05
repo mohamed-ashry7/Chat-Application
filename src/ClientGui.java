@@ -21,6 +21,7 @@ public class ClientGui {
 	public JFrame frame;
 	private JTextField textField;
 	private Client client ; 
+	public Chatty chatter ; 
 	/**
 	 * Launch the application.
 	 */
@@ -42,7 +43,8 @@ public class ClientGui {
 	 */
 	public ClientGui() {
 		initialize();
-		client = new Client () ; 
+		client = new Client (this) ; 
+	 
 	}
 
 	/**
@@ -118,9 +120,9 @@ public class ClientGui {
 					frame.remove(comboBox);
 					frame.remove(btnJoin);
 					frame.setLayout(new BorderLayout());
-					Chatty cchh = new Chatty(client, cch ) ; 
+					chatter = new Chatty(client, cch ) ; 
 
-					frame.add(cchh ,BorderLayout.CENTER) ; 
+					frame.add(chatter ,BorderLayout.CENTER) ; 
 					frame.repaint();
 					frame.revalidate();
 				}

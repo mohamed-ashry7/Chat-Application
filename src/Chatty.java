@@ -18,7 +18,12 @@ import javax.swing.JTextField;
 public class Chatty extends JPanel {
 	private JTextField message;
 	private JTextField TTL;
+	private JTextArea theChat ; 
 	
+	public void setTheChat (String Chat ) { 
+		theChat.setText(Chat);
+
+	}
 	/**
 	 * Create the panel.
 	 */
@@ -30,21 +35,21 @@ public class Chatty extends JPanel {
 		 add(TTL);
 		 TTL.setColumns(10);
 		 
-		JTextArea theChat = new JTextArea();
-		Thread cc = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-					while (true ) { 
-				
-						theChat.setText(client.getChatt());
-					}
-			      
-				
-			}
-		}) ; 
-		cc.start();
-		theChat.setBounds(25, 293, 262, 275);
+		theChat = new JTextArea();
+//		Thread cc = new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//					while (true ) { 
+//				
+//						theChat.setText(client.getChatt());
+//					}
+//			      
+//				
+//			}
+//		}) ; 
+//		cc.start();
+		theChat.setBounds(25, 293, 300, 275);
 		add(theChat);
 		
 		JComboBox<String > comboBoxx = new JComboBox<String>();
@@ -152,8 +157,8 @@ public class Chatty extends JPanel {
 		btnQuit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				client.quit();
-                JOptionPane.showInternalMessageDialog(null , "YOU HAVE QUITTED , BYE YOUNG FELLOW COME SOON ");
-				gooei.frame.dispose();
+//                JOptionPane.showInternalMessageDialog(null , "YOU HAVE QUITTED , BYE YOUNG FELLOW COME SOON ");
+				gooei.frame.setVisible(false);;
 				
 			}
 		});
@@ -165,6 +170,16 @@ public class Chatty extends JPanel {
 		add(HALLO);
 		 HALLO.setText("Hello " + client.getClientName());
 		 HALLO.setEditable(false );
+		 
+		 JButton clearChat = new JButton("Clear Chat");
+		 clearChat.addActionListener(new ActionListener() {
+		 	public void actionPerformed(ActionEvent arg0) {
+		 		client.Chatt = "" ; 
+		 		theChat.setText("");
+		 	}
+		 });
+		 clearChat.setBounds(441, 250, 97, 25);
+		 add(clearChat);
 
 	
 

@@ -183,11 +183,12 @@ public class Server {
 
 							if (target == null) {
 								String sec = s.nextToken() ;  
-								if (Integer.parseInt(sec) == 1) { 
+								int ttl = Integer.parseInt(sec) ; 
+								if (ttl == 1) { 
 									out.println("Sorry this message was not sent because of ttl ");
 								}
 								else {
-								outServer.println("CONNECT " + name);
+								outServer.println("CONNECT " + name +" 2");
 								ser.targetSocket = this.socket;
 								ser.out1 = new PrintWriter(this.socket.getOutputStream(), true);
 								ser.tarName = name;
@@ -246,6 +247,8 @@ public class Server {
 							} else {
 								out1.println("FROM " + this.clientName + " : " + x);
 							}
+							targetSocket = null ; 
+
 						} else {
 //							out.println(FROM_SERVER + x);
 						}
