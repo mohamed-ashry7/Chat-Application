@@ -47,7 +47,7 @@ public class Server {
 		System.out.println("The Server is running.");
 		ExecutorService pool = Executors.newCachedThreadPool();
 		int clientNumber = 0;
-		theOtherServer = new Socket("DESKTOP-NF39RN5", 6000);
+		theOtherServer = new Socket("localhost", 6000);
 		outServer = new PrintWriter(theOtherServer.getOutputStream(), true);
 		inFromOtherServer = new BufferedReader(new InputStreamReader(theOtherServer.getInputStream()));
 		outServer.println("SERVER");
